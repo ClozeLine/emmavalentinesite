@@ -9,7 +9,7 @@ import type { OrbitControls as OrbitControlsType } from "three-stdlib";
 // Zoom configuration - change this to adjust max zoom out
 export const ZOOM_CONFIG = {
   minDistance: 1.5,
-  maxDistance: 5,
+  maxDistance: 8,
 };
 
 interface GlobeSceneProps {
@@ -81,7 +81,7 @@ function LoadingFallback() {
 
 // Camera position to look at ~35°N latitude
 const CAMERA_LAT = 35 * (Math.PI / 180);
-const CAMERA_DISTANCE = 2.5;
+const CAMERA_DISTANCE = 4;
 const CAMERA_POSITION: [number, number, number] = [
   0,
   Math.sin(CAMERA_LAT) * CAMERA_DISTANCE,

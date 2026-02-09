@@ -21,6 +21,7 @@ const sourceSerif = Source_Serif_4({
 export const metadata: Metadata = {
   title: "Our Travel Adventures",
   description: "An interactive globe showcasing our visited countries",
+  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
 };
 
 export default function RootLayout({

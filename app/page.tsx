@@ -58,7 +58,7 @@ export default function Home() {
       </div>
 
       {/* Progress text - uses mix-blend-mode for automatic contrast */}
-      <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none mix-blend-difference">
+      <div className="absolute left-0 right-0 text-center pointer-events-none mix-blend-difference" style={{ bottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}>
         <p className="text-gray-300 italic relative font-serif tracking-wide">
           <span
             className="transition-opacity duration-500"
