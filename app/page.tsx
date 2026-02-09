@@ -48,9 +48,9 @@ export default function Home() {
   const remainingCount = TOTAL_COUNTRIES - visitedCount;
 
   return (
-    <div className="relative h-screen w-screen bg-white overflow-hidden">
+    <div className="fixed inset-0 bg-white overflow-hidden">
       {/* Globe container */}
-      <div className="h-full w-full">
+      <div className="absolute inset-0">
         <GlobeScene
           onCountryClick={handleCountryClick}
           onMaxZoom={handleMaxZoom}
@@ -58,7 +58,7 @@ export default function Home() {
       </div>
 
       {/* Progress text - uses mix-blend-mode for automatic contrast */}
-      <div className="absolute left-0 right-0 text-center pointer-events-none mix-blend-difference" style={{ bottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}>
+      <div className="fixed bottom-8 left-0 right-0 text-center pointer-events-none mix-blend-difference">
         <p className="text-gray-300 italic relative font-serif tracking-wide">
           <span
             className="transition-opacity duration-500"
