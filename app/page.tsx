@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { CountryModal } from "@/components/Modal";
 import {
   getVisitedCountry,
-  updateCache,
+  visitedCountries,
   TOTAL_COUNTRIES,
-  ApiCountryData,
 } from "@/data/visitedCountries";
 import { VisitedCountry } from "@/types/country";
 
@@ -26,30 +25,9 @@ export default function Home() {
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visitedCount, setVisitedCount] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [isAtMaxZoom, setIsAtMaxZoom] = useState(false);
 
-  // Load visited countries from API
-  useEffect(() => {
-    async function loadCountries() {
-      try {
-        const response = await fetch("/api/countries");
-        const data = await response.json();
-
-        if (data.countries) {
-          updateCache(data.countries as ApiCountryData[]);
-          setVisitedCount(data.countries.length);
-        }
-        setIsLoaded(true);
-      } catch (error) {
-        console.error("Failed to load countries:", error);
-        setIsLoaded(true);
-      }
-    }
-
-    loadCountries();
-  }, []);
+  const visitedCount = visitedCountries.length;
 
   const handleCountryClick = (countryId: string) => {
     const country = getVisitedCountry(countryId);
@@ -73,17 +51,10 @@ export default function Home() {
     <div className="relative h-screen w-screen bg-white overflow-hidden">
       {/* Globe container */}
       <div className="h-full w-full">
-        {isLoaded && (
-          <GlobeScene
-            onCountryClick={handleCountryClick}
-            onMaxZoom={handleMaxZoom}
-          />
-        )}
-        {!isLoaded && (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-gray-300 font-serif italic tracking-wide">Loading...</div>
-          </div>
-        )}
+        <GlobeScene
+          onCountryClick={handleCountryClick}
+          onMaxZoom={handleMaxZoom}
+        />
       </div>
 
       {/* Progress text - uses mix-blend-mode for automatic contrast */}

@@ -1,82 +1,65 @@
 import { VisitedCountry } from "@/types/country";
+import { countryNameToId, getDisplayName } from "@/lib/countryMapping";
 
-// This will be populated from the API
-let visitedCountriesCache: VisitedCountry[] = [];
-let visitedIdsCache: Set<string> = new Set();
-let isLoaded = false;
+// Static list of visited countries
+const visitedCountryNames = [
+  "france",
+  "italy",
+  "indonesia",
+  "belgium",
+  "netherlands",
+  "hungary",
+  "poland",
+  "germany",
+];
 
-export interface ApiCountryData {
-  id: string;
-  name: string;
-  normalizedName: string;
-  image: string;
-}
+// Map of country names to their images (in public/images/)
+const countryImages: Record<string, string> = {
+  france: "/images/france.jpg",
+  italy: "/images/italy.jpg",
+  indonesia: "/images/indonesia.jpg",
+  belgium: "/images/belgium.jpg",
+  netherlands: "/images/netherlands.jpg",
+  hungary: "/images/hungary.jpg",
+  poland: "/images/poland.jpg",
+  germany: "/images/germany.jpg",
+};
 
-export interface ApiResponse {
-  countries: ApiCountryData[];
-  totalCountries: number;
-}
+// Build the static visited countries data
+export const visitedCountries: VisitedCountry[] = visitedCountryNames
+  .map((name) => {
+    const id = countryNameToId[name];
+    if (!id) return null;
+    return {
+      id,
+      name: getDisplayName(name),
+      image: countryImages[name] || "",
+    };
+  })
+  .filter((c): c is VisitedCountry => c !== null);
+
+// Set of visited country IDs for quick lookup
+const visitedIds = new Set(visitedCountries.map((c) => c.id));
 
 // Total number of countries in the world (UN recognized)
 export const TOTAL_COUNTRIES = 195;
 
-export async function loadVisitedCountries(): Promise<VisitedCountry[]> {
-  if (isLoaded) return visitedCountriesCache;
-
-  try {
-    const response = await fetch("/api/countries");
-    const data: ApiResponse = await response.json();
-
-    visitedCountriesCache = data.countries.map((c) => ({
-      id: c.id,
-      name: c.name,
-      image: c.image,
-    }));
-
-    visitedIdsCache = new Set(data.countries.map((c) => c.id));
-    isLoaded = true;
-
-    return visitedCountriesCache;
-  } catch (error) {
-    console.error("Failed to load visited countries:", error);
-    return [];
-  }
-}
-
-// Synchronous check - uses cache, returns false if not loaded
+// Check if a country is visited
 export function isCountryVisited(countryId: string): boolean {
-  return visitedIdsCache.has(countryId);
+  return visitedIds.has(countryId);
 }
 
-// Get visited country data from cache
+// Get visited country data
 export function getVisitedCountry(countryId: string): VisitedCountry | undefined {
-  return visitedCountriesCache.find((c) => c.id === countryId);
+  return visitedCountries.find((c) => c.id === countryId);
 }
 
 // Get count of visited countries
 export function getVisitedCount(): number {
-  return visitedCountriesCache.length;
+  return visitedCountries.length;
 }
 
 // Get count of remaining countries
 export function getRemainingCount(): number {
-  return TOTAL_COUNTRIES - visitedCountriesCache.length;
-}
-
-// Reset cache (useful for refreshing)
-export function resetCache(): void {
-  visitedCountriesCache = [];
-  visitedIdsCache = new Set();
-  isLoaded = false;
-}
-
-// Update the cache with new data (called from components after API load)
-export function updateCache(countries: ApiCountryData[]): void {
-  visitedCountriesCache = countries.map((c) => ({
-    id: c.id,
-    name: c.name,
-    image: c.image,
-  }));
-  visitedIdsCache = new Set(countries.map((c) => c.id));
-  isLoaded = true;
+  return TOTAL_COUNTRIES - visitedCountries.length;
 }
