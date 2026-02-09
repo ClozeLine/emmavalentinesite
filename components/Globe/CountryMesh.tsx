@@ -57,7 +57,9 @@ export default function CountryMesh({
 
     for (const polygon of polygons) {
       for (const ring of polygon) {
-        const points = geoCoordinatesToPoints(ring, 1.002, 1);
+        // Raise outlines slightly higher for visited countries so they render on top
+        const radius = isVisited ? 1.004 : 1.002;
+        const points = geoCoordinatesToPoints(ring, radius, 1);
         if (points.length > 2) {
           allPoints.push(points);
         }
@@ -65,12 +67,14 @@ export default function CountryMesh({
     }
 
     return allPoints;
-  }, [polygons]);
+  }, [polygons, isVisited]);
 
   // Create filled mesh geometry for ALL countries
+  // Visited countries are raised slightly to appear above unvisited ones
   const filledGeometry = useMemo(() => {
-    return createPolygonGeometry(polygons, 1.001);
-  }, [polygons]);
+    const radius = isVisited ? 1.003 : 1.001;
+    return createPolygonGeometry(polygons, radius);
+  }, [polygons, isVisited]);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     if (isVisited && onClick) {
@@ -93,10 +97,11 @@ export default function CountryMesh({
   };
 
   // Colors: white for unvisited, green for visited
+  // Outlines are slightly darker for visibility between neighboring visited countries
   const outlineColor = isVisited
     ? hovered
-      ? "#16a34a"
-      : "#22c55e"
+      ? "#15803d"
+      : "#16a34a"
     : "#d4d4d4";
 
   const fillColor = isVisited
@@ -106,7 +111,7 @@ export default function CountryMesh({
     : "#ffffff";
 
   // Line width based on zoom (thicker when zoomed in)
-  const baseLineWidth = isVisited ? 2.5 : 1.5;
+  const baseLineWidth = isVisited ? 1.5 : 1.5;
   const lineWidth = baseLineWidth * zoomFactor;
   const lineOpacity = zoomFactor;
 
