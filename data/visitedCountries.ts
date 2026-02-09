@@ -63,3 +63,4 @@ export function getVisitedCount(): number {
 export function getRemainingCount(): number {
   return TOTAL_COUNTRIES - visitedCountries.length;
 }
+
